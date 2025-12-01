@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 export default function LoginPage() {
     const [form, setForm] = useState({
@@ -11,7 +12,8 @@ export default function LoginPage() {
 
     const [mensagem, setMensagem] = useState("");
 
-    const API_URL = "http://localhost:8080/api/v1/auth";
+    // ENDPOINT CORRETO
+    const API_URL = "http://localhost:8080/api/v1/auth/login";
 
     const handleChange = (e) => {
         setForm({
@@ -26,16 +28,19 @@ export default function LoginPage() {
 
         try {
             const response = await axios.post(API_URL, form);
-            console.log(response.data);
 
-            setMensagem("Login realizado com sucesso!");
-            setForm({ email: "", senha: "" });
+            // Login ok → Pega token
+            const token = response.data.token;
+
+            // Salva token localmente
+            localStorage.setItem("token", token);
+
+            // Redireciona para a home
+            window.location.href = "/";
+
         } catch (error) {
-            if (error.response?.data?.errors) {
-                const erros = error.response.data.errors;
-                const campo = Object.keys(erros)[0];
-                const msg = erros[campo];
-                setMensagem(msg);
+            if (error.response?.status === 401) {
+                setMensagem("Email ou senha inválidos.");
             } else {
                 setMensagem("Erro ao realizar login.");
             }
@@ -43,56 +48,81 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-            <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg border border-gray-200">
-
-                <h1 className="text-3xl font-semibold mb-8 text-center text-blue-600">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
+    
+            <div className="bg-white w-full max-w-md p-10 rounded-2xl shadow-2xl border border-blue-200">
+    
+                {/* TÍTULO */}
+                <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">
                     Login
                 </h1>
-
+    
+                <div className="w-20 h-1 bg-blue-500 mx-auto rounded mb-8"></div>
+    
+                {/* MENSAGEM */}
                 {mensagem && (
-                    <div className="mb-4 text-center text-red-500 font-medium">
+                    <div className="mb-4 text-center text-red-600 font-semibold bg-red-100 p-3 rounded-lg border border-red-300">
                         {mensagem}
                     </div>
                 )}
-
+    
+                {/* FORM */}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    
                     {/* EMAIL */}
-                    <div className="flex flex-col">
-                        <label className="font-semibold text-blue-700 mb-1">Email</label>
+                    <div>
+                        <label className="font-semibold text-blue-700">
+                            Email
+                        </label>
                         <input
                             type="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
                             placeholder="Digite seu email"
-                            className="w-full mt-1 p-3 border rounded-lg text-black bg-white placeholder-gray-600"
+                            className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                                       placeholder-blue-400 font-medium
+                                       focus:outline-none focus:border-blue-600 text-gray-900 shadow-sm"
                         />
                     </div>
-
+    
                     {/* SENHA */}
-                    <div className="flex flex-col">
-                        <label className="font-semibold text-blue-700 mb-1">Senha</label>
+                    <div>
+                        <label className="font-semibold text-blue-700">
+                            Senha
+                        </label>
                         <input
                             type="password"
                             name="senha"
                             value={form.senha}
                             onChange={handleChange}
                             placeholder="Digite sua senha"
-                            className="border border-blue-400 rounded-lg px-3 py-2 
-              placeholder-blue-500 font-medium
-              focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg
+                                       placeholder-blue-400 font-medium
+                                       focus:outline-none focus:border-blue-600 text-gray-900 shadow-sm"
                         />
-                    </div>
 
+                        {/* LINK PARA CADASTRO */}
+                        <p className="mt-2 text-sm text-blue-600 font-medium text-center">
+                            Não tem cadastro?{" "}
+                            <Link
+                                href="/usuario/create"
+                                className="underline hover:text-blue-800"
+                            >
+                                Clique para se inscrever
+                            </Link>
+                        </p>
+                    </div>
+    
+                    {/* BOTÃO */}
                     <button
                         type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold 
+                                   py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
                     >
                         Entrar
                     </button>
                 </form>
-
             </div>
         </div>
     );

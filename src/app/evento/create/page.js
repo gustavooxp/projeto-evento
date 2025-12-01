@@ -18,7 +18,7 @@ export default function CreateEvento() {
 
     const [errors, setErrors] = useState({});
     const [mensagem, setMensagem] = useState("");
-    const [submitted, setSubmitted] = useState(false); // 🔥 controla quando mostrar "*"
+    const [submitted, setSubmitted] = useState(false);
 
     const tiposEvento = [
         "CONGRESSO",
@@ -50,7 +50,7 @@ export default function CreateEvento() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true); // 🔥 ativa exibição dos "*"
+        setSubmitted(true);
         setMensagem("");
         setErrors({});
 
@@ -74,7 +74,7 @@ export default function CreateEvento() {
                 linkEvento: "",
                 linkImagem: "",
             });
-            setSubmitted(false); // limpa os "*" após sucesso
+            setSubmitted(false);
         } catch (error) {
             if (error.response?.status === 400) {
                 setErrors(error.response.data.errors || {});
@@ -85,14 +85,16 @@ export default function CreateEvento() {
         }
     };
 
-    // 🔥 função utilitária para saber quando mostrar "*"
     const showStar = (field) =>
         submitted && (!form[field] || errors[field]);
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-10 bg-gray-100">
+        <div
+            className="min-h-screen flex flex-col items-center p-10 
+            bg-gradient-to-br from-blue-50 via-blue-100 to-white"
+        >
 
-            {/* TOPBAR (somente espaço, sem links) */}
+            {/* TOPBAR */}
             <div className="w-full flex justify-between mb-10">
                 <div></div>
                 <div className="space-x-4 invisible">
@@ -100,8 +102,7 @@ export default function CreateEvento() {
                 </div>
             </div>
 
-
-            {/* CARD FORM */}
+            {/* CARD */}
             <form
                 onSubmit={handleSubmit}
                 className="bg-white shadow-xl p-8 rounded-xl w-full max-w-2xl space-y-5 border border-blue-100"
@@ -122,7 +123,8 @@ export default function CreateEvento() {
                     </div>
                 )}
 
-                {/* NOME */}
+                {/* CAMPOS */}
+
                 <div>
                     <label className="font-semibold text-blue-700">
                         Nome {showStar("nome") && <span className="text-red-600">*</span>}
@@ -133,12 +135,12 @@ export default function CreateEvento() {
                         value={form.nome}
                         onChange={handleChange}
                         placeholder="Digite o nome do evento"
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                     {errors.nome && <p className="text-red-600 text-sm">{errors.nome}</p>}
                 </div>
 
-                {/* DESCRIÇÃO */}
                 <div>
                     <label className="font-semibold text-blue-700">
                         Descrição {showStar("descricao") && <span className="text-red-600">*</span>}
@@ -148,14 +150,14 @@ export default function CreateEvento() {
                         value={form.descricao}
                         onChange={handleChange}
                         placeholder="Digite uma descrição"
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                     {errors.descricao && (
                         <p className="text-red-600 text-sm">{errors.descricao}</p>
                     )}
                 </div>
 
-                {/* TIPO */}
                 <div>
                     <label className="font-semibold text-blue-700">
                         Tipo do Evento {showStar("tipo") && <span className="text-red-600">*</span>}
@@ -164,19 +166,17 @@ export default function CreateEvento() {
                         name="tipo"
                         value={form.tipo}
                         onChange={handleChange}
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     >
                         <option value="">Selecione...</option>
                         {tiposEvento.map((t) => (
-                            <option key={t} value={t}>
-                                {t}
-                            </option>
+                            <option key={t} value={t}>{t}</option>
                         ))}
                     </select>
                     {errors.tipo && <p className="text-red-600 text-sm">{errors.tipo}</p>}
                 </div>
 
-                {/* LOCAL */}
                 <div>
                     <label className="font-semibold text-blue-700">
                         Local {showStar("local") && <span className="text-red-600">*</span>}
@@ -187,12 +187,12 @@ export default function CreateEvento() {
                         value={form.local}
                         onChange={handleChange}
                         placeholder="Digite o local"
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                     {errors.local && <p className="text-red-600 text-sm">{errors.local}</p>}
                 </div>
 
-                {/* DATA INÍCIO */}
                 <div>
                     <label className="font-semibold text-blue-700">
                         Data de Início {showStar("dataInicio") && <span className="text-red-600">*</span>}
@@ -202,14 +202,14 @@ export default function CreateEvento() {
                         name="dataInicio"
                         value={form.dataInicio}
                         onChange={handleChange}
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                     {errors.dataInicio && (
                         <p className="text-red-600 text-sm">{errors.dataInicio}</p>
                     )}
                 </div>
 
-                {/* DATA FINAL */}
                 <div>
                     <label className="font-semibold text-blue-700">
                         Data Final {showStar("dataFinal") && <span className="text-red-600">*</span>}
@@ -219,14 +219,14 @@ export default function CreateEvento() {
                         name="dataFinal"
                         value={form.dataFinal}
                         onChange={handleChange}
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                     {errors.dataFinal && (
                         <p className="text-red-600 text-sm">{errors.dataFinal}</p>
                     )}
                 </div>
 
-                {/* LINK DO EVENTO */}
                 <div>
                     <label className="font-semibold text-blue-700">Link do Evento</label>
                     <input
@@ -235,11 +235,11 @@ export default function CreateEvento() {
                         value={form.linkEvento}
                         onChange={handleChange}
                         placeholder="https://exemplo.com"
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                 </div>
 
-                {/* LINK DA IMAGEM */}
                 <div>
                     <label className="font-semibold text-blue-700">Link da Imagem</label>
                     <input
@@ -248,13 +248,15 @@ export default function CreateEvento() {
                         value={form.linkImagem}
                         onChange={handleChange}
                         placeholder="URL da imagem"
-                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 text-gray-900"
+                        className="w-full mt-1 p-3 border-2 border-blue-300 rounded-lg 
+                        focus:outline-none focus:border-blue-600 text-gray-900"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-700 text-white font-semibold p-3 rounded-lg shadow hover:bg-blue-800 transition"
+                    className="w-full bg-blue-700 text-white font-semibold p-3 rounded-lg 
+                    shadow hover:bg-blue-800 transition"
                 >
                     Criar Evento
                 </button>
