@@ -9,6 +9,7 @@ export default function LoginPage() {
         email: "",
         senha: "",
     });
+    
 
     const [mensagem, setMensagem] = useState("");
 
@@ -29,13 +30,10 @@ export default function LoginPage() {
         try {
             const response = await axios.post(API_URL, form);
 
-            // Login ok → Pega token
             const token = response.data.token;
 
-            // Salva token localmente
             localStorage.setItem("token", token);
 
-            // Redireciona para a home
             window.location.href = "/";
 
         } catch (error) {
@@ -52,24 +50,24 @@ export default function LoginPage() {
     
             <div className="bg-white w-full max-w-md p-10 rounded-2xl shadow-2xl border border-blue-200">
     
-                {/* TÍTULO */}
+                {}
                 <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">
                     Login
                 </h1>
     
                 <div className="w-20 h-1 bg-blue-500 mx-auto rounded mb-8"></div>
     
-                {/* MENSAGEM */}
+                {}
                 {mensagem && (
                     <div className="mb-4 text-center text-red-600 font-semibold bg-red-100 p-3 rounded-lg border border-red-300">
                         {mensagem}
                     </div>
                 )}
     
-                {/* FORM */}
+                {}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
     
-                    {/* EMAIL */}
+                    {}
                     <div>
                         <label className="font-semibold text-blue-700">
                             Email
@@ -86,7 +84,7 @@ export default function LoginPage() {
                         />
                     </div>
     
-                    {/* SENHA */}
+                    {}
                     <div>
                         <label className="font-semibold text-blue-700">
                             Senha
@@ -102,7 +100,7 @@ export default function LoginPage() {
                                        focus:outline-none focus:border-blue-600 text-gray-900 shadow-sm"
                         />
 
-                        {/* LINK PARA CADASTRO */}
+                        {}
                         <p className="mt-2 text-sm text-blue-600 font-medium text-center">
                             Não tem cadastro?{" "}
                             <Link
@@ -114,7 +112,7 @@ export default function LoginPage() {
                         </p>
                     </div>
     
-                    {/* BOTÃO */}
+                    {}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold 

@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function CadastroUsuarioPage() {
+    const router = useRouter();
+
     const [form, setForm] = useState({
         email: "",
         senha: "",
@@ -15,25 +18,82 @@ export default function CadastroUsuarioPage() {
     });
 
     const [mensagem, setMensagem] = useState("");
+    const [success, setSuccess] = useState(false);
 
     const API_URL = "http://localhost:8080/api/v1/usuario";
 
     const handleChange = (e) => {
+        let { name, value } = e.target;
+
+        // Máscara para CPF
+        if (name === "cpf") {
+            value = value
+                .replace(/\D/g, "")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        }
+
+        // Máscara para telefone (Brasil)
+        if (name === "telefone") {
+            value = value
+                .replace(/\D/g, "")
+                .replace(/^(\d{2})(\d)/, "($1) $2")
+                .replace(/(\d{5})(\d)/, "$1-$2")
+                .slice(0, 15); // limita a 15 caracteres
+        }
+
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
+    };
+
+    const validarDados = () => {
+        if (!form.email) return "O email deve ser preenchido";
+        if (!/\S+@\S+\.\S+/.test(form.email)) return "O email deve ser válido";
+        if (form.email.length > 150) return "O email deve ter no máximo 150 caracteres";
+
+        if (!form.senha) return "A senha deve ser preenchida";
+
+        if (!form.nome) return "O nome deve ser preenchido";
+        if (form.nome.length < 3 || form.nome.length > 150)
+            return "O nome deve ter no máximo 150 caracteres";
+
+        if (!form.cpf) return "O CPF deve ser preenchido";
+
+        if (!form.telefone) return "O telefone deve ser preenchido";
+        if (form.telefone.length > 15)
+            return "O telefone deve ter no máximo 15 caracteres";
+
+        if (!form.tipo) return "O tipo do usuário deve ser preenchido";
+
+        if (!form.dataNascimento) return "A data de nascimento deve ser preenchida";
+
+        return null;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMensagem("");
+        setSuccess(false);
+
+        const erro = validarDados();
+        if (erro) {
+            setMensagem(erro);
+            return;
+        }
 
         try {
-            const response = await axios.post(API_URL, form);
-            console.log(response.data);
+            await axios.post(API_URL, form);
 
-            setMensagem("Usuário cadastrado com sucesso!");
+            setMensagem("Cadastro concluído com sucesso!");
+            setSuccess(true);
+
+            setTimeout(() => {
+                router.push("/usuario/login");
+            }, 2000);
+
             setForm({
                 email: "",
                 senha: "",
@@ -59,20 +119,19 @@ export default function CadastroUsuarioPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
             <div className="bg-white w-full max-w-2xl p-10 rounded-2xl shadow-xl border border-blue-200">
-
                 <h1 className="text-3xl font-bold mb-8 text-center text-blue-700 drop-shadow-sm">
                     Cadastro de Usuário
                 </h1>
 
                 {mensagem && (
-                    <div className="mb-4 text-center text-red-600 font-semibold">
+                    <div className={`mb-4 text-center font-semibold ${success ? "text-green-600" : "text-red-600"}`}>
                         {mensagem}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {/* EMAIL */}
+                    {/* Email */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Email</label>
                         <input
@@ -80,12 +139,13 @@ export default function CadastroUsuarioPage() {
                             name="email"
                             value={form.email}
                             onChange={handleChange}
-                            placeholder="Digite seu email"
+                            placeholder="exemplo@dominio.com"
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-blue-500 font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Email válido (máx. 150 caracteres)</p>
                     </div>
 
-                    {/* SENHA */}
+                    {/* Senha */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Senha</label>
                         <input
@@ -96,9 +156,10 @@ export default function CadastroUsuarioPage() {
                             placeholder="Digite sua senha"
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-blue-500 font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Preencha sua senha</p>
                     </div>
 
-                    {/* NOME */}
+                    {/* Nome */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Nome</label>
                         <input
@@ -109,6 +170,7 @@ export default function CadastroUsuarioPage() {
                             placeholder="Digite seu nome completo"
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-blue-500 font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Nome entre 3 e 150 caracteres</p>
                     </div>
 
                     {/* CPF */}
@@ -119,12 +181,13 @@ export default function CadastroUsuarioPage() {
                             name="cpf"
                             value={form.cpf}
                             onChange={handleChange}
-                            placeholder="Digite seu CPF"
+                            placeholder="000.000.000-00"
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-blue-500 font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Formato: 000.000.000-00</p>
                     </div>
 
-                    {/* TELEFONE */}
+                    {/* Telefone */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Telefone</label>
                         <input
@@ -132,12 +195,13 @@ export default function CadastroUsuarioPage() {
                             name="telefone"
                             value={form.telefone}
                             onChange={handleChange}
-                            placeholder="Digite seu telefone"
+                            placeholder="(00) 00000-0000"
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-blue-500 font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Formato: (00) 00000-0000</p>
                     </div>
 
-                    {/* TIPO DE USUÁRIO */}
+                    {/* Tipo de Usuário */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Tipo de Usuário</label>
                         <select
@@ -151,21 +215,25 @@ export default function CadastroUsuarioPage() {
                             <option value="ORGANIZADOR">Organizador</option>
                             <option value="ADMINISTRADOR">Administrador</option>
                         </select>
+                        <p className="text-xs text-gray-500 mt-1">Escolha o tipo de usuário</p>
                     </div>
 
-                    {/* DATA DE NASCIMENTO */}
-                    <div className="flex flex-col">
-                        <label className="font-semibold text-blue-700 mb-1">Data de Nascimento</label>
+                    {/* Data de Nascimento */}
+                    <div className="md:col-span-2 w-full max-w-xs mx-auto flex flex-col">
+                        <label className="font-semibold text-blue-700 mb-1 text-center">
+                            Data de Nascimento
+                        </label>
                         <input
                             type="date"
                             name="dataNascimento"
                             value={form.dataNascimento}
                             onChange={handleChange}
-                            className="border border-blue-400 rounded-lg px-3 py-2 text-black font-medium focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full border border-blue-400 rounded-lg px-3 py-2 text-black text-center font-medium focus:outline-none focus:ring focus:ring-blue-300"
                         />
+                        <p className="text-xs text-gray-500 mt-1 text-center">Selecione sua data de nascimento</p>
                     </div>
 
-                    {/* BOTÃO */}
+                    {/* Botão */}
                     <div className="md:col-span-2">
                         <button
                             type="submit"

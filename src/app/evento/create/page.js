@@ -94,7 +94,7 @@ export default function CreateEvento() {
             bg-gradient-to-br from-blue-50 via-blue-100 to-white"
         >
 
-            {/* TOPBAR */}
+            { }
             <div className="w-full flex justify-between mb-10">
                 <div></div>
                 <div className="space-x-4 invisible">
@@ -102,7 +102,7 @@ export default function CreateEvento() {
                 </div>
             </div>
 
-            {/* CARD */}
+            { }
             <form
                 onSubmit={handleSubmit}
                 className="bg-white shadow-xl p-8 rounded-xl w-full max-w-2xl space-y-5 border border-blue-100"
@@ -123,7 +123,7 @@ export default function CreateEvento() {
                     </div>
                 )}
 
-                {/* CAMPOS */}
+                { }
 
                 <div>
                     <label className="font-semibold text-blue-700">

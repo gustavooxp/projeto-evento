@@ -4,21 +4,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Calendar, MapPin, Link as LinkIcon } from "lucide-react";
 
-/**
- * Página de listagem de eventos (Next.js + React client component)
- * Melhorias realizadas:
- * - Adicionado "use client" (para App Router do Next.js)
- * - Estados de loading / error
- * - Fallback com dados mock quando a chamada ao localhost falhar (útil em sandbox/tests)
- * - Proteções contra acesso a campos undefined
- * - Pequenas melhorias de acessibilidade e UX (skeleton enquanto carrega)
- */
 export default function EventosPage() {
-  const [eventos, setEventos] = useState(null); // null = ainda não carregou
+  const [eventos, setEventos] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mock de segurança para ambientes onde http://localhost:8080 não é acessível
+  // Simulação de usuário logado
+  const [usuarioLogado, setUsuarioLogado] = useState({
+    id: 1,
+    nome: "Gustavo",
+  });
+
   const MOCK_EVENTOS = [
     {
       id: 1,
@@ -63,21 +59,17 @@ export default function EventosPage() {
       setError(null);
 
       try {
-        // chave: a chamada pode falhar em sandboxes que não permitem localhost.
-        // por isso deixamos o fallback abaixo.
         const response = await axios.get("http://localhost:8080/api/v1/evento", {
           timeout: 3000,
         });
 
         if (!mounted) return;
 
-        // Algumas APIs retornam { data: [...] } ou apenas [...]
         const data = Array.isArray(response.data) ? response.data : response.data?.content || [];
 
         setEventos(data);
       } catch (err) {
         console.error("Erro ao buscar eventos:", err);
-        // No ambiente de desenvolvimento/sandbox, usar dados mock garante que a UI continue testável.
         if (mounted) {
           setError(err.message || "Erro ao buscar eventos");
           setEventos(MOCK_EVENTOS);
@@ -95,11 +87,8 @@ export default function EventosPage() {
   }, []);
 
   const formatDate = (raw) => {
-    // a API do usuário envia datas no formato dd/MM/yyyy HH:mm — já legível.
-    // caso venha uma ISO, tentamos convertê-la para formato local.
     if (!raw) return "Data não informada";
 
-    // tenta detectar formato ISO simples
     const isoLike = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw);
     if (isoLike) {
       try {
@@ -110,7 +99,26 @@ export default function EventosPage() {
       }
     }
 
-    return raw; // já no formato dd/MM/yyyy HH:mm
+    return raw; 
+  };
+
+  const handleInscrever = async (evento) => {
+    if (!usuarioLogado) {
+      alert("Você precisa estar logado para se inscrever.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8080/api/v1/inscricao", {
+        evento: { id: evento.id },
+        usuario: { id: usuarioLogado.id },
+      });
+
+      alert(`Inscrição realizada no evento: ${evento.nome}`);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao se inscrever no evento.");
+    }
   };
 
   if (loading) {
@@ -128,7 +136,6 @@ export default function EventosPage() {
     );
   }
 
-  // após carregar, eventos deve ser um array — mas temos proteção caso venha nulo
   const lista = Array.isArray(eventos) ? eventos : [];
 
   if (lista.length === 0) {
@@ -145,11 +152,7 @@ export default function EventosPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-      
-      
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm">Eventos</h1>
 
       {/* Evento em destaque */}
       <article
@@ -191,6 +194,16 @@ export default function EventosPage() {
             </a>
           )}
         </div>
+
+        {/* Botão de inscrição */}
+        {usuarioLogado && (
+          <button
+            onClick={() => handleInscrever(destaque)}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Inscrever-se
+          </button>
+        )}
       </article>
 
       {/* Miniaturas */}
@@ -215,12 +228,24 @@ export default function EventosPage() {
             <div className="flex items-center gap-2 mt-2 text-gray-800 text-sm">
               <Calendar size={16} /> {formatDate(evento.dataInicio)}
             </div>
+
+            {/* Botão de inscrição miniatura */}
+            {usuarioLogado && (
+              <button
+                onClick={() => handleInscrever(evento)}
+                className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition"
+              >
+                Inscrever-se
+              </button>
+            )}
           </article>
         ))}
       </section>
 
       {error && (
-        <div className="mt-6 text-sm text-yellow-700">Atenção: houve um problema ao consultar a API — usando dados em cache/mock para exibição.</div>
+        <div className="mt-6 text-sm text-yellow-700">
+          Atenção: houve um problema ao consultar a API — usando dados em cache/mock para exibição.
+        </div>
       )}
     </div>
   );
