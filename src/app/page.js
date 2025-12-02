@@ -9,12 +9,12 @@ export default function EventosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulação de usuário logado
-  const [usuarioLogado, setUsuarioLogado] = useState({
-    id: 1,
-    nome: "Gustavo",
-  });
+  // Usuário logado (dinâmico)
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
 
+  
+
+  // Simulação de mock de eventos
   const MOCK_EVENTOS = [
     {
       id: 1,
@@ -51,6 +51,7 @@ export default function EventosPage() {
     },
   ];
 
+  // Busca eventos
   useEffect(() => {
     let mounted = true;
 
@@ -61,12 +62,12 @@ export default function EventosPage() {
       try {
         const response = await axios.get("http://localhost:8080/api/v1/evento", {
           timeout: 3000,
+          withCredentials: true,
         });
 
         if (!mounted) return;
 
         const data = Array.isArray(response.data) ? response.data : response.data?.content || [];
-
         setEventos(data);
       } catch (err) {
         console.error("Erro ao buscar eventos:", err);
@@ -80,7 +81,6 @@ export default function EventosPage() {
     };
 
     fetchEventos();
-
     return () => {
       mounted = false;
     };
@@ -88,35 +88,37 @@ export default function EventosPage() {
 
   const formatDate = (raw) => {
     if (!raw) return "Data não informada";
-
     const isoLike = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw);
     if (isoLike) {
       try {
-        const d = new Date(raw);
-        return d.toLocaleString();
-      } catch (e) {
+        return new Date(raw).toLocaleString();
+      } catch {
         return raw;
       }
     }
-
-    return raw; 
+    return raw;
   };
 
   const handleInscrever = async (evento) => {
-    if (!usuarioLogado) {
+    console.log(localStorage.getItem("id"))
+    if (!localStorage.getItem("id")) {
       alert("Você precisa estar logado para se inscrever.");
       return;
     }
 
     try {
-      await axios.post("http://localhost:8080/api/v1/inscricao", {
-        evento: { id: evento.id },
-        usuario: { id: usuarioLogado.id },
-      });
+      await axios.post(
+        "http://localhost:8080/api/v1/inscricao",
+        {
+          evento: { id: evento.id },
+          usuario: { id: localStorage.getItem("id") },
+        },
+        { withCredentials: true }
+      );
 
       alert(`Inscrição realizada no evento: ${evento.nome}`);
     } catch (err) {
-      console.error(err);
+      console.error("Erro na inscrição:", err.response?.data || err.message);
       alert("Erro ao se inscrever no evento.");
     }
   };
@@ -155,18 +157,13 @@ export default function EventosPage() {
       <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm">Eventos</h1>
 
       {/* Evento em destaque */}
-      <article
-        aria-label="Evento em destaque"
-        className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden"
-      >
+      <article className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden">
         <div className="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-300 to-transparent opacity-30 rounded-full pointer-events-none blur-3xl" />
-
         <img
           src={destaque.linkImagem || "https://via.placeholder.com/1200x600?text=Sem+imagem"}
           alt={destaque.nome || "Evento sem nome"}
           className="w-full h-64 object-cover rounded-xl shadow-lg"
         />
-
         <h2 className="text-2xl font-bold text-gray-900 mt-4">{destaque.nome}</h2>
         <p className="text-gray-700 mt-2">{destaque.descricao}</p>
 
@@ -174,15 +171,12 @@ export default function EventosPage() {
           <span className="flex items-center gap-2">
             <MapPin size={18} /> {destaque.local || "Local não informado"}
           </span>
-
           <span className="flex items-center gap-2">
             <Calendar size={18} /> Início: {formatDate(destaque.dataInicio)}
           </span>
-
           <span className="flex items-center gap-2">
             <Calendar size={18} /> Final: {formatDate(destaque.dataFinal)}
           </span>
-
           {destaque.linkEvento && (
             <a
               href={destaque.linkEvento}
@@ -195,15 +189,13 @@ export default function EventosPage() {
           )}
         </div>
 
-        {/* Botão de inscrição */}
-        {usuarioLogado && (
-          <button
-            onClick={() => handleInscrever(destaque)}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Inscrever-se
-          </button>
-        )}
+        {/* Botão de inscrição destaque */}
+        <button
+          onClick={() => handleInscrever(destaque)}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Inscrever-se
+        </button>
       </article>
 
       {/* Miniaturas */}
@@ -212,32 +204,26 @@ export default function EventosPage() {
           <article
             key={evento.id}
             className="bg-white shadow-xl rounded-xl p-4 hover:scale-105 transition-transform relative overflow-hidden"
-            aria-label={`Miniatura do evento ${evento.nome}`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-transparent to-blue-300 opacity-20 pointer-events-none" />
-
             <img
               src={evento.linkImagem || "https://via.placeholder.com/400x240?text=Sem+imagem"}
               alt={evento.nome}
               className="w-full h-32 object-cover rounded-md shadow"
             />
-
             <h3 className="font-bold text-gray-900 mt-3">{evento.nome}</h3>
             <p className="text-sm text-gray-700 line-clamp-2">{evento.descricao}</p>
-
             <div className="flex items-center gap-2 mt-2 text-gray-800 text-sm">
               <Calendar size={16} /> {formatDate(evento.dataInicio)}
             </div>
 
             {/* Botão de inscrição miniatura */}
-            {usuarioLogado && (
-              <button
-                onClick={() => handleInscrever(evento)}
-                className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition"
-              >
-                Inscrever-se
-              </button>
-            )}
+            <button
+              onClick={() => handleInscrever(evento)}
+              className="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition"
+            >
+              Inscrever-se
+            </button>
           </article>
         ))}
       </section>

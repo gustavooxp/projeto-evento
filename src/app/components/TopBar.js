@@ -22,12 +22,21 @@ export default function TopBar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.reload();
+    localStorage.removeItem("id");
+    localStorage.removeItem("nome");
+
+    console.log("DEPOIS:", {
+      token: localStorage.getItem("token"),
+      id: localStorage.getItem("id"),
+      nome: localStorage.getItem("nome"),
+    });
+
+
+    window.location.href = "/usuario/login"; // redireciona após logout
   };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 pointer-events-none">
-      { }
       <div
         className={`absolute inset-0 transition-opacity duration-700 ease-out
           backdrop-blur-md bg-white/95 shadow-lg
@@ -36,7 +45,6 @@ export default function TopBar() {
 
       <div className="relative max-w-7xl mx-auto px-6 py-3 flex items-center pointer-events-auto">
 
-        { }
         <Link
           href="/"
           className="flex items-center gap-2 font-bold text-lg text-blue-900 hover:opacity-80 transition"
@@ -45,12 +53,10 @@ export default function TopBar() {
           Events Manager
         </Link>
 
-        { }
         <div className="flex-1" />
 
-        { }
         <div className="flex items-center gap-4 min-w-[400px] justify-end">
-          { }
+
           <Link
             href="/evento/create"
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
@@ -59,7 +65,6 @@ export default function TopBar() {
             Cadastrar Evento
           </Link>
 
-          { }
           <Link
             href="/usuario/login"
             className={`flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-xl shadow hover:bg-gray-900 transition ${logado ? "hidden" : ""}`}
@@ -68,7 +73,6 @@ export default function TopBar() {
             Entrar
           </Link>
 
-          { }
           <button
             onClick={handleLogout}
             className={`flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700 transition ${!logado ? "hidden" : ""}`}
