@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, LogIn, User } from "lucide-react";
+// Adicionei 'Users' aos imports
+import { Home, PlusCircle, LogIn, User, Users } from "lucide-react";
 
 export default function TopBar() {
   const [fade, setFade] = useState(false);
@@ -16,6 +17,7 @@ export default function TopBar() {
   }, []);
 
   useEffect(() => {
+    // Mantive localStorage conforme seu código enviado
     const token = localStorage.getItem("token");
     setLogado(!!token);
   }, []);
@@ -25,14 +27,7 @@ export default function TopBar() {
     localStorage.removeItem("id");
     localStorage.removeItem("nome");
 
-    console.log("DEPOIS:", {
-      token: localStorage.getItem("token"),
-      id: localStorage.getItem("id"),
-      nome: localStorage.getItem("nome"),
-    });
-
-
-    window.location.href = "/usuario/login"; // redireciona após logout
+    window.location.href = "/usuario/login"; 
   };
 
   return (
@@ -55,7 +50,17 @@ export default function TopBar() {
 
         <div className="flex-1" />
 
-        <div className="flex items-center gap-4 min-w-[400px] justify-end">
+        {/* Mudei min-w-[400px] para min-w-fit para acomodar o novo botão sem quebrar */}
+        <div className="flex items-center gap-4 min-w-fit justify-end">
+
+          {/* NOVO BOTÃO: USUÁRIOS */}
+          <Link
+            href="/usuario/search"
+            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
+          >
+            <Users size={20} />
+            Usuários
+          </Link>
 
           <Link
             href="/evento/create"

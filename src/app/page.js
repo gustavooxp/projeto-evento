@@ -154,8 +154,10 @@ export default function EventosPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm">Eventos</h1>
-
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
+      
       {/* Evento em destaque */}
       <article className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden">
         <div className="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-300 to-transparent opacity-30 rounded-full pointer-events-none blur-3xl" />
