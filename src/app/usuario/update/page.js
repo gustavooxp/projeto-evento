@@ -2,20 +2,16 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-// import { useRouter, useParams } from "next/navigation"; // 1. Descomente em produção
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function EditUsuarioPage() {
-    // 2. Em produção, use o hook do Next.js para pegar o ID da URL:
-    // const router = useRouter();
-    // const params = useParams();
-    // const id = params.id; 
-    
-    // Para teste no preview, fixamos um ID (simulando que você clicou no usuário 1)
-    const id = 1;
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const id = searchParams.get("id");
 
     const [form, setForm] = useState({
         email: "",
-        senha: "", // Começa vazia. Se o usuário não digitar nada, enviamos vazia/null.
+        senha: "",
         nome: "",
         cpf: "",
         telefone: "",
@@ -29,27 +25,30 @@ export default function EditUsuarioPage() {
 
     const API_URL = "http://localhost:8080/api/v1/usuario";
 
-    // --- 1. BUSCAR DADOS (GET) PARA PREENCHER A TELA ---
     useEffect(() => {
+        if (!id) {
+            setMensagem("ID do usuário não fornecido. Redirecionando...");
+            setTimeout(() => {
+                router.push("/usuario/search");
+            }, 2000);
+            setLoading(false);
+            return;
+        }
+
         const fetchUsuario = async () => {
             try {
-                // Busca os dados do usuário pelo ID
                 const response = await axios.get(`${API_URL}/${id}`);
                 const userData = response.data;
 
-                // Formata a data para o input HTML (yyyy-MM-dd) caso venha em formato ISO ou TimeStamp
                 if (userData.dataNascimento) {
-                    // Se vier como "2000-10-05T00:00:00", pegamos só a primeira parte
                     userData.dataNascimento = userData.dataNascimento.toString().split('T')[0];
                 }
                 
-                // A senha vem nula ou mascarada do backend (READ_ONLY), então limpamos para o form
                 userData.senha = ""; 
 
                 setForm(userData);
             } catch (error) {
                 console.warn("API offline ou usuário não encontrado, usando mock para teste.");
-                // Mock para você ver a tela preenchida caso a API esteja off
                 setForm({
                     email: "usuario.teste@senai.br",
                     senha: "",
@@ -64,15 +63,12 @@ export default function EditUsuarioPage() {
             }
         };
 
-        if (id) {
-            fetchUsuario();
-        }
-    }, [id]);
+        fetchUsuario();
+    }, [id, router]);
 
     const handleChange = (e) => {
         let { name, value } = e.target;
 
-        // Máscara para CPF
         if (name === "cpf") {
             value = value
                 .replace(/\D/g, "")
@@ -81,7 +77,6 @@ export default function EditUsuarioPage() {
                 .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
         }
 
-        // Máscara para telefone
         if (name === "telefone") {
             value = value
                 .replace(/\D/g, "")
@@ -109,12 +104,11 @@ export default function EditUsuarioPage() {
         if (!form.tipo) return "O tipo do usuário deve ser preenchido";
         if (!form.dataNascimento) return "A data de nascimento deve ser preenchida";
 
-        // Observação: Não validamos senha aqui porque na edição ela é opcional (conforme seu DTO)
-        
+        if (!form.senha) return "A senha deve ser preenchida";
+                
         return null;
     };
 
-    // --- 2. ATUALIZAR DADOS (PUT) ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMensagem("");
@@ -127,13 +121,7 @@ export default function EditUsuarioPage() {
         }
 
         try {
-            // Prepara o objeto para envio
-            // Se a senha estiver vazia, o backend deve tratar (manter a antiga ou ignorar)
-            // Se o seu backend exigir que não envie o campo senha caso vazio, você pode filtrar aqui.
             const payload = { ...form };
-            if (!payload.senha) {
-                // Opcional: delete payload.senha; // Se o backend preferir não receber o campo
-            }
 
             await axios.put(`${API_URL}/${id}`, payload);
 
@@ -141,8 +129,7 @@ export default function EditUsuarioPage() {
             setSuccess(true);
 
             setTimeout(() => {
-                // router.push("/usuario/search"); // Redireciona na versão final
-                window.location.href = "/usuario/search";
+                router.push("/usuario/search");
             }, 2000);
 
         } catch (error) {
@@ -180,7 +167,6 @@ export default function EditUsuarioPage() {
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {/* Email (Geralmente readonly ou editável dependendo da regra, aqui deixei editável) */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Email</label>
                         <input
@@ -192,21 +178,20 @@ export default function EditUsuarioPage() {
                         />
                     </div>
 
-                    {/* Senha (Opcional na edição) */}
                     <div className="flex flex-col">
-                        <label className="font-semibold text-blue-700 mb-1">Senha</label>
+                        <label className="font-semibold text-blue-700 mb-1">Senha <span className="text-red-500">*</span></label>
                         <input
                             type="password"
                             name="senha"
                             value={form.senha}
                             onChange={handleChange}
-                            placeholder="Deixe vazio para manter a atual"
+                            placeholder="Digite a senha (obrigatório)"
+                            required
                             className="border border-blue-400 rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-300"
                         />
-                        <p className="text-xs text-gray-500 mt-1">Preencha apenas se quiser alterar</p>
+                        <p className="text-xs text-gray-500 mt-1">É necessário preencher a senha novamente</p>
                     </div>
 
-                    {/* Nome */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Nome</label>
                         <input
@@ -218,7 +203,6 @@ export default function EditUsuarioPage() {
                         />
                     </div>
 
-                    {/* CPF */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">CPF</label>
                         <input
@@ -230,7 +214,6 @@ export default function EditUsuarioPage() {
                         />
                     </div>
 
-                    {/* Telefone */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Telefone</label>
                         <input
@@ -242,7 +225,6 @@ export default function EditUsuarioPage() {
                         />
                     </div>
 
-                    {/* Tipo de Usuário */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Tipo de Usuário</label>
                         <select
@@ -258,7 +240,6 @@ export default function EditUsuarioPage() {
                         </select>
                     </div>
 
-                    {/* Data de Nascimento */}
                     <div className="md:col-span-2 w-full max-w-xs mx-auto flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1 text-center">
                             Data de Nascimento
@@ -272,7 +253,6 @@ export default function EditUsuarioPage() {
                         />
                     </div>
 
-                    {/* Botões */}
                     <div className="md:col-span-2 flex gap-4 mt-4">
                         <button
                             type="button"
