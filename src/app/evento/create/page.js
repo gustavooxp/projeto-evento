@@ -37,32 +37,27 @@ export default function CreateEvento() {
 
     function formatarData(dataLocal) {
         if (!dataLocal) return "";
-        const dt = new Date(dataLocal);
-
-        const dia = String(dt.getDate()).padStart(2, "0");
-        const mes = String(dt.getMonth() + 1).padStart(2, "0");
-        const ano = dt.getFullYear();
-        const hora = String(dt.getHours()).padStart(2, "0");
-        const min = String(dt.getMinutes()).padStart(2, "0");
-
-        return `${dia}/${mes}/${ano} ${hora}:${min}`;
+        const [data, hora] = dataLocal.split("T");
+        const [ano, mes, dia] = data.split("-");
+        return `${dia}/${mes}/${ano} ${hora}`;
     }
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
         setMensagem("");
         setErrors({});
-
+    
         try {
             const payload = {
                 ...form,
                 dataInicio: formatarData(form.dataInicio),
                 dataFinal: formatarData(form.dataFinal),
             };
-
+          
             await axios.post("http://localhost:8080/api/v1/evento", payload);
-
+    
             setMensagem("Evento criado com sucesso!");
             setForm({
                 nome: "",
