@@ -198,17 +198,17 @@ function UserCard({ user, onEdit, onDelete }) {
                 <div className="mt-4 pt-4 border-t border-blue-50">
                     <h3 className="text-sm font-bold text-blue-700 mb-3 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-blue-400" />
-                        Eventos Inscritos ({user.inscricoes?.length || 0})
+                        Eventos Inscritos ({user.eventos?.length || 0})
                     </h3>
 
                     <div className="space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-blue-100 scrollbar-track-transparent">
-                        {user.inscricoes && user.inscricoes.length > 0 ? (
-                            user.inscricoes.map((inscricao, idx) => (
+                        {user.eventos && user.eventos.length > 0 ? (
+                            user.eventos.map((inscricao, idx) => (
                                 <div key={idx} className="bg-blue-50/50 p-2 rounded-lg border border-blue-100 text-xs">
-                                    <p className="font-semibold text-blue-800">{inscricao.evento?.nome || "Evento sem nome"}</p>
-                                    <p className="text-slate-500 mt-1 flex justify-between">
+                                    <p className="font-semibold text-blue-800">{inscricao.nome || "Evento sem nome" }</p>
+                                    <p className="text-slate-500 mt-1">
                                         <span>Data Inscrição:</span>
-                                        <span>{formatarData(inscricao.createdAt || new Date())}</span>
+                                        <span>{formatarData(inscricao.dataInicio || new Date())}</span>
                                     </p>
                                 </div>
                             ))
@@ -244,7 +244,7 @@ function gerarDadosMock(filtroTipo, filtroNome) {
             telefone: "(11) 98888-7777",
             tipo: "CLIENTE",
             dataNascimento: "1990-05-15",
-            inscricoes: [
+            eventos: [
                 { evento: { nome: "Workshop de React" }, createdAt: "2023-10-01" },
                 { evento: { nome: "Semana da Tecnologia" }, createdAt: "2023-11-12" }
             ]
@@ -257,7 +257,7 @@ function gerarDadosMock(filtroTipo, filtroNome) {
             telefone: "(21) 99999-8888",
             tipo: "ORGANIZADOR",
             dataNascimento: "1985-08-20",
-            inscricoes: []
+            eventos: []
         },
         {
             id: 3,
@@ -267,7 +267,7 @@ function gerarDadosMock(filtroTipo, filtroNome) {
             telefone: "(41) 3333-3333",
             tipo: "ADMINISTRADOR",
             dataNascimento: "1980-01-01",
-            inscricoes: [
+            eventos: [
                 { evento: { nome: "Reunião de Gestão" }, createdAt: "2023-12-05" }
             ]
         },
@@ -279,7 +279,7 @@ function gerarDadosMock(filtroTipo, filtroNome) {
             telefone: "(31) 97777-6666",
             tipo: "CLIENTE",
             dataNascimento: "1995-03-10",
-            inscricoes: [
+            eventos: [
                 { evento: { nome: "Curso de Java Spring" }, createdAt: "2023-09-15" },
                 { evento: { nome: "Hackathon 2024" }, createdAt: "2023-10-20" },
                 { evento: { nome: "Meetup de IA" }, createdAt: "2023-11-01" }
