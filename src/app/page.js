@@ -96,25 +96,25 @@ export default function EventosPage() {
 
   const handleInscrever = async (evento) => {
     const usuarioId = localStorage.getItem("id");
-
+  
     if (!usuarioId) {
       alert("Você precisa estar logado para se inscrever.");
-      window.location.href = "/login";
+      window.location.href = "/usuario/login"; // <-- aqui mudou
       return;
     }
-
+  
     try {
       const payload = {
         eventoId: evento.id,
         usuarioId: Number(usuarioId),
       };
-
+  
       const response = await axios.post(
         "http://localhost:8080/api/v1/inscricao",
         payload,
         { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );
-
+  
       console.log("Inscrição realizada:", response.data);
       alert(`Inscrição realizada no evento: ${evento.nome}`);
     } catch (err) {
@@ -122,6 +122,7 @@ export default function EventosPage() {
       alert("Erro ao se inscrever. Tente novamente mais tarde.");
     }
   };
+  
 
   if (loading) {
     return (
