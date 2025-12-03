@@ -27,7 +27,7 @@ export default function TopBar() {
     localStorage.removeItem("id");
     localStorage.removeItem("nome");
 
-    window.location.href = "/usuario/login"; 
+    window.location.href = "/usuario/login";
   };
 
   return (
@@ -61,6 +61,16 @@ export default function TopBar() {
             <Users size={20} />
             Usuários
           </Link>
+
+          {/* NOVO BOTÃO: PESQUISAR EVENTOS */}
+          <Link
+            href="/evento/search"
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl shadow hover:bg-green-700 transition"
+          >
+            <PlusCircle size={20} />
+            Pesquisar Eventos
+          </Link>
+
 
           <Link
             href="/evento/create"

@@ -39,14 +39,14 @@ export default function PesquisaEventoPage() {
             try {
                 const response = await axios.get(url);
                 let eventosFiltrados = response.data;
-                
+
                 if (filtroNome && filtroNome.trim() !== "") {
                     const nomeBusca = filtroNome.trim().toLowerCase();
-                    eventosFiltrados = eventosFiltrados.filter(evento => 
+                    eventosFiltrados = eventosFiltrados.filter(evento =>
                         evento.nome && evento.nome.toLowerCase().includes(nomeBusca)
                     );
                 }
-                
+
                 setEventos(eventosFiltrados);
             } catch (apiError) {
                 console.warn("API offline ou erro de conexão, usando dados de teste.", apiError);
@@ -77,21 +77,21 @@ export default function PesquisaEventoPage() {
                     return (status >= 200 && status < 300) || status === 204;
                 }
             });
-            
+
             setEventos((prevEventos) => prevEventos.filter((e) => e.id !== idNumero && e.id !== id));
             alert("Evento excluído com sucesso!");
         } catch (err) {
             console.error("Erro ao deletar evento:", err);
             console.error("ID usado:", id);
             console.error("Response:", err.response);
-            
+
             let errorMessage = "Erro ao excluir evento.";
             if (err.response) {
                 errorMessage = err.response.data?.message || err.response.data?.error || `Erro ${err.response.status}: ${err.response.statusText}`;
             } else if (err.message) {
                 errorMessage = err.message;
             }
-            
+
             alert(errorMessage);
         }
     };
@@ -107,6 +107,13 @@ export default function PesquisaEventoPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
+                { }
+                <div className="w-full flex justify-between mb-10">
+                    <div></div>
+                    <div className="space-x-4 invisible">
+                        <span>placeholder</span>
+                    </div>
+                </div>
                 <div className="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 mb-8">
                     <h1 className="text-3xl font-bold mb-6 text-blue-600 text-center md:text-left flex items-center gap-3">
                         <Calendar className="w-8 h-8 text-blue-400" />
@@ -328,7 +335,7 @@ function gerarDadosMock(filtroTipo, filtroNome) {
 
     if (filtroNome && filtroNome.trim() !== "") {
         const nomeBusca = filtroNome.trim().toLowerCase();
-        filtrados = filtrados.filter(e => 
+        filtrados = filtrados.filter(e =>
             e.nome && e.nome.toLowerCase().includes(nomeBusca)
         );
     }

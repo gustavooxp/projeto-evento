@@ -79,7 +79,15 @@ export default function PesquisaUsuarioPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
+                { }
+                <div className="w-full flex justify-between mb-10">
+                    <div></div>
+                    <div className="space-x-4 invisible">
+                        <span>placeholder</span>
+                    </div>
+                </div>
                 <div className="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 mb-8">
+
                     <h1 className="text-3xl font-bold mb-6 text-blue-600 text-center md:text-left flex items-center gap-3">
                         <User className="w-8 h-8 text-blue-400" />
                         Pesquisar Usuários
