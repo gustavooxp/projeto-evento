@@ -96,25 +96,25 @@ export default function EventosPage() {
 
   const handleInscrever = async (evento) => {
     const usuarioId = localStorage.getItem("id");
-  
+
     if (!usuarioId) {
       alert("Você precisa estar logado para se inscrever.");
-      window.location.href = "/usuario/login"; // <-- aqui mudou
+      window.location.href = "/usuario/login";
       return;
     }
-  
+
     try {
       const payload = {
         eventoId: evento.id,
         usuarioId: Number(usuarioId),
       };
-  
+
       const response = await axios.post(
         "http://localhost:8080/api/v1/inscricao",
         payload,
         { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );
-  
+
       console.log("Inscrição realizada:", response.data);
       alert(`Inscrição realizada no evento: ${evento.nome}`);
     } catch (err) {
@@ -122,7 +122,7 @@ export default function EventosPage() {
       alert("Erro ao se inscrever. Tente novamente mais tarde.");
     }
   };
-  
+
 
   if (loading) {
     return (
@@ -155,18 +155,18 @@ export default function EventosPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 p-6 flex flex-col items-center">
-      
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-     
-                    
-                    <div className="space-x-4 invisible">
-                        <span>placeholder</span>
-                    </div>
-                    <div className="space-x-4 invisible">
-                        <span>placeholder</span>
-                    </div>
 
-      {/* Evento em destaque */}
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
+
+
+      <div className="space-x-4 invisible">
+        <span>placeholder</span>
+      </div>
+      <div className="space-x-4 invisible">
+        <span>placeholder</span>
+      </div>
+
+
       <article className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
         <div className="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-300 to-transparent opacity-30 rounded-full pointer-events-none blur-3xl" />
         <img
@@ -207,7 +207,6 @@ export default function EventosPage() {
         </button>
       </article>
 
-      {/* Miniaturas dos demais eventos */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
         {miniaturas.map((evento) => (
           <article

@@ -182,8 +182,8 @@ export default function EditEventoPage() {
                             success
                                 ? "p-3 rounded bg-green-100 text-green-700 text-sm mb-4 border border-green-300"
                                 : mensagem.includes("Corrija") || mensagem.includes("Erro")
-                                ? "p-3 rounded bg-red-100 text-red-700 text-sm mb-4 border border-red-300"
-                                : "p-3 rounded bg-blue-100 text-blue-700 text-sm mb-4"
+                                    ? "p-3 rounded bg-red-100 text-red-700 text-sm mb-4 border border-red-300"
+                                    : "p-3 rounded bg-blue-100 text-blue-700 text-sm mb-4"
                         }
                     >
                         {mensagem}
@@ -326,7 +326,7 @@ export default function EditEventoPage() {
                     >
                         Cancelar
                     </button>
-                    
+
                     <button
                         type="submit"
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all"

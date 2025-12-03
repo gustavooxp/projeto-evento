@@ -15,7 +15,7 @@ export default function PesquisaUsuarioPage() {
 
     const API_URL = "http://localhost:8080/api/v1/usuario";
 
-    // Função para buscar usuários
+
     const buscarUsuarios = async (e) => {
         if (e) e.preventDefault();
         setLoading(true);
@@ -52,7 +52,7 @@ export default function PesquisaUsuarioPage() {
         }
     };
 
-    // Função para deletar usuário
+
     const handleDelete = async (id) => {
         const confirmacao = window.confirm("Tem certeza que deseja excluir este usuário? Essa ação não pode ser desfeita.");
         if (!confirmacao) return;
@@ -205,7 +205,7 @@ function UserCard({ user, onEdit, onDelete }) {
                         {user.eventos && user.eventos.length > 0 ? (
                             user.eventos.map((inscricao, idx) => (
                                 <div key={idx} className="bg-blue-50/50 p-2 rounded-lg border border-blue-100 text-xs">
-                                    <p className="font-semibold text-blue-800">{inscricao.nome || "Evento sem nome" }</p>
+                                    <p className="font-semibold text-blue-800">{inscricao.nome || "Evento sem nome"}</p>
                                     <p className="text-slate-500 mt-1">
                                         <span>Data Inscrição:</span>
                                         <span>{formatarData(inscricao.dataInicio || new Date())}</span>
@@ -231,9 +231,7 @@ function UserCard({ user, onEdit, onDelete }) {
     );
 }
 
-// ------------------------------------------------------------------
-// FUNÇÃO AUXILIAR APENAS PARA O PREVIEW (MOCK DE DADOS)
-// ------------------------------------------------------------------
+
 function gerarDadosMock(filtroTipo, filtroNome) {
     const todos = [
         {

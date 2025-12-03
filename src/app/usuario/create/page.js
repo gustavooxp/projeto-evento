@@ -25,7 +25,6 @@ export default function CadastroUsuarioPage() {
     const handleChange = (e) => {
         let { name, value } = e.target;
 
-        // Máscara para CPF
         if (name === "cpf") {
             value = value
                 .replace(/\D/g, "")
@@ -34,13 +33,12 @@ export default function CadastroUsuarioPage() {
                 .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
         }
 
-        // Máscara para telefone (Brasil)
         if (name === "telefone") {
             value = value
                 .replace(/\D/g, "")
                 .replace(/^(\d{2})(\d)/, "($1) $2")
                 .replace(/(\d{5})(\d)/, "$1-$2")
-                .slice(0, 15); // limita a 15 caracteres
+                .slice(0, 15);
         }
 
         setForm({
@@ -131,7 +129,6 @@ export default function CadastroUsuarioPage() {
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {/* Email */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Email</label>
                         <input
@@ -145,7 +142,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Email válido (máx. 150 caracteres)</p>
                     </div>
 
-                    {/* Senha */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Senha</label>
                         <input
@@ -159,7 +155,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Preencha sua senha</p>
                     </div>
 
-                    {/* Nome */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Nome</label>
                         <input
@@ -173,7 +168,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Nome entre 3 e 150 caracteres</p>
                     </div>
 
-                    {/* CPF */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">CPF</label>
                         <input
@@ -187,7 +181,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Formato: 000.000.000-00</p>
                     </div>
 
-                    {/* Telefone */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Telefone</label>
                         <input
@@ -201,7 +194,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Formato: (00) 00000-0000</p>
                     </div>
 
-                    {/* Tipo de Usuário */}
                     <div className="flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1">Tipo de Usuário</label>
                         <select
@@ -218,7 +210,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1">Escolha o tipo de usuário</p>
                     </div>
 
-                    {/* Data de Nascimento */}
                     <div className="md:col-span-2 w-full max-w-xs mx-auto flex flex-col">
                         <label className="font-semibold text-blue-700 mb-1 text-center">
                             Data de Nascimento
@@ -233,7 +224,6 @@ export default function CadastroUsuarioPage() {
                         <p className="text-xs text-gray-500 mt-1 text-center">Selecione sua data de nascimento</p>
                     </div>
 
-                    {/* Botão */}
                     <div className="md:col-span-2">
                         <button
                             type="submit"

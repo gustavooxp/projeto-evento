@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-// Adicionei 'Users' aos imports
 import { Home, PlusCircle, LogIn, User, Users } from "lucide-react";
 
 export default function TopBar() {
@@ -17,7 +16,7 @@ export default function TopBar() {
   }, []);
 
   useEffect(() => {
-    // Mantive localStorage conforme seu código enviado
+
     const token = localStorage.getItem("token");
     setLogado(!!token);
   }, []);
@@ -50,10 +49,8 @@ export default function TopBar() {
 
         <div className="flex-1" />
 
-        {/* Mudei min-w-[400px] para min-w-fit para acomodar o novo botão sem quebrar */}
         <div className="flex items-center gap-4 min-w-fit justify-end">
 
-          {/* NOVO BOTÃO: USUÁRIOS */}
           <Link
             href="/usuario/search"
             className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
@@ -62,7 +59,6 @@ export default function TopBar() {
             Usuários
           </Link>
 
-          {/* NOVO BOTÃO: PESQUISAR EVENTOS */}
           <Link
             href="/evento/search"
             className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl shadow hover:bg-green-700 transition"

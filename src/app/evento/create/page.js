@@ -41,23 +41,23 @@ export default function CreateEvento() {
         const [ano, mes, dia] = data.split("-");
         return `${dia}/${mes}/${ano} ${hora}`;
     }
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
         setMensagem("");
         setErrors({});
-    
+
         try {
             const payload = {
                 ...form,
                 dataInicio: formatarData(form.dataInicio),
                 dataFinal: formatarData(form.dataFinal),
             };
-          
+
             await axios.post("http://localhost:8080/api/v1/evento", payload);
-    
+
             setMensagem("Evento criado com sucesso!");
             setForm({
                 nome: "",

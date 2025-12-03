@@ -43,8 +43,8 @@ export default function EditUsuarioPage() {
                 if (userData.dataNascimento) {
                     userData.dataNascimento = userData.dataNascimento.toString().split('T')[0];
                 }
-                
-                userData.senha = ""; 
+
+                userData.senha = "";
 
                 setForm(userData);
             } catch (error) {
@@ -98,14 +98,14 @@ export default function EditUsuarioPage() {
 
         if (!form.nome) return "O nome deve ser preenchido";
         if (form.nome.length < 3) return "O nome deve ter no mínimo 3 caracteres";
-        
+
         if (!form.cpf) return "O CPF deve ser preenchido";
         if (!form.telefone) return "O telefone deve ser preenchido";
         if (!form.tipo) return "O tipo do usuário deve ser preenchido";
         if (!form.dataNascimento) return "A data de nascimento deve ser preenchida";
 
         if (!form.senha) return "A senha deve ser preenchida";
-                
+
         return null;
     };
 
@@ -261,7 +261,7 @@ export default function EditUsuarioPage() {
                         >
                             Cancelar
                         </button>
-                        
+
                         <button
                             type="submit"
                             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all"

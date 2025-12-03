@@ -9,7 +9,7 @@ export default function LoginPage() {
         email: "",
         senha: "",
     });
-    
+
     const [mensagem, setMensagem] = useState("");
     const API_URL = "http://localhost:8080/api/v1/auth/login";
 
@@ -29,12 +29,11 @@ export default function LoginPage() {
 
             const { token, id, nome } = response.data;
 
-            // 🔥 SALVAR TUDO NO LOCALSTORAGE
             localStorage.setItem("token", token);
             localStorage.setItem("id", id);
             localStorage.setItem("nome", nome);
 
-            window.location.href = "/"; // redireciona para a home
+            window.location.href = "/";
 
         } catch (error) {
             if (error.response?.status === 401) {

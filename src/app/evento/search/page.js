@@ -62,12 +62,12 @@ export default function PesquisaEventoPage() {
 
     const handleDelete = async (id) => {
         if (!id) return alert("ID do evento não encontrado.");
-    
+
         const confirmacao = window.confirm(
             "Tem certeza que deseja excluir este evento? Essa ação não pode ser desfeita."
         );
         if (!confirmacao) return;
-    
+
         try {
             await axios.delete(`${API_URL}/${id}`);
             alert("Evento excluído com sucesso!");
@@ -88,7 +88,7 @@ export default function PesquisaEventoPage() {
             }
         }
     };
-    
+
 
     const handleEdit = (id) => {
         window.location.href = `/evento/update?id=${id}`;
