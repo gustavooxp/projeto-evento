@@ -117,7 +117,7 @@ export default function CadastroUsuarioPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
+        <div className="min-h-screen flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 p-6">
             <div className="bg-white w-full max-w-2xl p-10 rounded-2xl shadow-xl border border-blue-200">
                 <h1 className="text-3xl font-bold mb-8 text-center text-blue-700 drop-shadow-sm">
                     Cadastro de Usuário

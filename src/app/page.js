@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Calendar, MapPin, Link as LinkIcon, Edit, Trash2 } from "lucide-react";
+import { Calendar, MapPin, Link as LinkIcon } from "lucide-react";
 
 export default function EventosPage() {
   const [eventos, setEventos] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [usuarioLogado, setUsuarioLogado] = useState(null);
 
   const API_URL = "http://localhost:8080/api/v1/evento";
 
@@ -106,84 +104,23 @@ export default function EventosPage() {
     }
 
     try {
-      // payload que o backend espera
       const payload = {
         eventoId: evento.id,
-        usuarioId: Number(localStorage.getItem("id"))
+        usuarioId: Number(usuarioId),
       };
 
-      const response = await axios({
-        method: "post",
-        url: "http://localhost:8080/api/v1/inscricao",
-        data: payload,
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/inscricao",
+        payload,
+        { headers: { "Content-Type": "application/json" }, withCredentials: true }
+      );
 
       console.log("Inscrição realizada:", response.data);
       alert(`Inscrição realizada no evento: ${evento.nome}`);
     } catch (err) {
       console.error("Erro na inscrição:", err);
-
-      if (err.response) {
-        // backend retornou erro (500 ou 4xx)
-        console.error("Resposta do backend:", err.response.data);
-        alert(`Erro ao se inscrever: ${err.response.data?.message || JSON.stringify(err.response.data)}`);
-      } else if (err.request) {
-        // requisição enviada mas sem resposta
-        console.error("Requisição enviada sem resposta:", err.request);
-        alert("Erro: servidor não respondeu. Tente novamente mais tarde.");
-      } else {
-        console.error("Erro inesperado:", err.message);
-        alert(`Erro inesperado: ${err.message}`);
-      }
+      alert("Erro ao se inscrever. Tente novamente mais tarde.");
     }
-  };
-
-  const handleDelete = async (id) => {
-    const confirmacao = window.confirm("Tem certeza que deseja excluir este evento? Essa ação não pode ser desfeita.");
-
-    if (!confirmacao) return;
-
-    if (!id) {
-      alert("ID do evento não encontrado.");
-      return;
-    }
-
-    try {
-      const idNumero = Number(id);
-      await axios.delete(`${API_URL}/${idNumero}`, {
-        validateStatus: function (status) {
-          return (status >= 200 && status < 300) || status === 204;
-        }
-      });
-
-      setEventos((prevEventos) => {
-        if (Array.isArray(prevEventos)) {
-          return prevEventos.filter((e) => e.id !== idNumero && e.id !== id);
-        }
-        return [];
-      });
-      alert("Evento excluído com sucesso!");
-      window.location.reload();
-    } catch (err) {
-      console.error("Erro ao deletar evento:", err);
-      console.error("ID usado:", id);
-      console.error("Response:", err.response);
-
-      let errorMessage = "Erro ao excluir evento.";
-      if (err.response) {
-        errorMessage = err.response.data?.message || err.response.data?.error || `Erro ${err.response.status}: ${err.response.statusText}`;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      alert(errorMessage);
-    }
-  };
-
-  const handleEdit = (id) => {
-    window.location.href = `/evento/update?id=${id}`;
   };
 
   if (loading) {
@@ -217,11 +154,10 @@ export default function EventosPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm"></h1>
+      <h1 className="text-3xl font-extrabold mb-6 text-blue-900 drop-shadow-sm">Eventos</h1>
 
-      <article className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden">
+      {/* Evento em destaque */}
+      <article className="w-full max-w-4xl bg-white shadow-2xl rounded-2xl p-6 mb-10 relative overflow-hidden flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
         <div className="absolute -top-20 -left-20 w-72 h-72 bg-gradient-to-br from-blue-300 to-transparent opacity-30 rounded-full pointer-events-none blur-3xl" />
         <img
           src={destaque.linkImagem || "https://via.placeholder.com/1200x600?text=Sem+imagem"}
@@ -231,7 +167,7 @@ export default function EventosPage() {
         <h2 className="text-2xl font-bold text-gray-900 mt-4">{destaque.nome}</h2>
         <p className="text-gray-700 mt-2">{destaque.descricao}</p>
 
-        <div className="flex flex-col gap-2 mt-4 text-gray-800">
+        <div className="flex flex-col gap-2 mt-4 text-gray-800 items-center">
           <span className="flex items-center gap-2">
             <MapPin size={18} /> {destaque.local || "Local não informado"}
           </span>
@@ -253,35 +189,20 @@ export default function EventosPage() {
           )}
         </div>
 
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={() => handleInscrever(destaque)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Inscrever-se
-          </button>
-          <button
-            onClick={() => handleEdit(destaque.id)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-400 hover:bg-indigo-500 text-white rounded-lg transition-colors shadow-sm"
-          >
-            <Edit size={16} />
-            Editar
-          </button>
-          <button
-            onClick={() => handleDelete(destaque.id)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-rose-400 hover:bg-rose-500 text-white rounded-lg transition-colors shadow-sm"
-          >
-            <Trash2 size={16} />
-            Deletar
-          </button>
-        </div>
+        <button
+          onClick={() => handleInscrever(destaque)}
+          className="mt-6 w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold text-lg"
+        >
+          Inscrever-se
+        </button>
       </article>
 
+      {/* Miniaturas dos demais eventos */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
         {miniaturas.map((evento) => (
           <article
             key={evento.id}
-            className="bg-white shadow-xl rounded-xl p-4 hover:scale-105 transition-transform relative overflow-hidden"
+            className="bg-white shadow-xl rounded-xl p-4 hover:scale-105 transition-transform relative overflow-hidden flex flex-col items-center text-center"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-transparent to-blue-300 opacity-20 pointer-events-none" />
             <img
@@ -291,32 +212,16 @@ export default function EventosPage() {
             />
             <h3 className="font-bold text-gray-900 mt-3">{evento.nome}</h3>
             <p className="text-sm text-gray-700 line-clamp-2">{evento.descricao}</p>
-            <div className="flex items-center gap-2 mt-2 text-gray-800 text-sm">
+            <div className="flex items-center gap-2 mt-2 text-gray-800 text-sm justify-center">
               <Calendar size={16} /> {formatDate(evento.dataInicio)}
             </div>
 
-            <div className="flex gap-2 mt-2">
-              <button
-                onClick={() => handleInscrever(evento)}
-                className="flex-1 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition"
-              >
-                Inscrever-se
-              </button>
-              <button
-                onClick={() => handleEdit(evento.id)}
-                className="flex items-center justify-center gap-1 px-2 py-1 bg-indigo-400 hover:bg-indigo-500 text-white rounded-md text-sm transition-colors shadow-sm"
-                title="Editar"
-              >
-                <Edit size={14} />
-              </button>
-              <button
-                onClick={() => handleDelete(evento.id)}
-                className="flex items-center justify-center gap-1 px-2 py-1 bg-rose-400 hover:bg-rose-500 text-white rounded-md text-sm transition-colors shadow-sm"
-                title="Deletar"
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
+            <button
+              onClick={() => handleInscrever(evento)}
+              className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg font-semibold"
+            >
+              Inscrever-se
+            </button>
           </article>
         ))}
       </section>
