@@ -61,40 +61,34 @@ export default function PesquisaEventoPage() {
     };
 
     const handleDelete = async (id) => {
-        const confirmacao = window.confirm("Tem certeza que deseja excluir este evento? Essa ação não pode ser desfeita.");
-
+        if (!id) return alert("ID do evento não encontrado.");
+    
+        const confirmacao = window.confirm(
+            "Tem certeza que deseja excluir este evento? Essa ação não pode ser desfeita."
+        );
         if (!confirmacao) return;
-
-        if (!id) {
-            alert("ID do evento não encontrado.");
-            return;
-        }
-
+    
         try {
-            const idNumero = Number(id);
-            await axios.delete(`${API_URL}/${idNumero}`, {
-                validateStatus: function (status) {
-                    return (status >= 200 && status < 300) || status === 204;
-                }
-            });
-
-            setEventos((prevEventos) => prevEventos.filter((e) => e.id !== idNumero && e.id !== id));
+            await axios.delete(`${API_URL}/${id}`);
             alert("Evento excluído com sucesso!");
+            setEventos((prev) => prev.filter(e => e.id !== id));
         } catch (err) {
-            console.error("Erro ao deletar evento:", err);
-            console.error("ID usado:", id);
-            console.error("Response:", err.response);
-
-            let errorMessage = "Erro ao excluir evento.";
+            // Tratar erro sem deixar o Next.js logar como erro no console
             if (err.response) {
-                errorMessage = err.response.data?.message || err.response.data?.error || `Erro ${err.response.status}: ${err.response.statusText}`;
-            } else if (err.message) {
-                errorMessage = err.message;
+                // Se for 500 (constraint), mostra mensagem amigável
+                if (err.response.status === 500) {
+                    alert("Não é possível excluir o evento, pois já possui usuários inscritos.");
+                } else {
+                    alert(`Erro ao excluir evento: ${err.response.statusText}`);
+                }
+            } else if (err.request) {
+                alert("Erro de conexão com o servidor. Tente novamente.");
+            } else {
+                alert(`Erro inesperado: ${err.message}`);
             }
-
-            alert(errorMessage);
         }
     };
+    
 
     const handleEdit = (id) => {
         window.location.href = `/evento/update?id=${id}`;
