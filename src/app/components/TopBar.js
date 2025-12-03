@@ -44,7 +44,7 @@ export default function TopBar() {
           className="flex items-center gap-2 font-bold text-lg text-blue-900 hover:opacity-80 transition"
         >
           <Home size={22} />
-          Events Manager
+          Eventify
         </Link>
 
         <div className="flex-1" />
